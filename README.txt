@@ -1,0 +1,3 @@
+ABC.py cria a pasta abc junto com as pastas a,b,c....
+genTexto.py gera uma imagem com um texto
+joshuaOCR.py é o ocr
