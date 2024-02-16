@@ -10,39 +10,45 @@ def create_folders(root_folder):
     for letter in range(65, 91):
         folder_name = chr(letter)
         folder_path = os.path.join(root_folder, folder_name)
-        os.makedirs(folder_path)
-        print(f"Folder '{folder_name}' created in '{root_folder}'.")
-
-def create_image_with_letter(folder):
-    letters = [chr(letter) for letter in range(65, 91)]
-    font = ImageFont.truetype('arial.ttf', size=24)
-
-    for letter in letters:
-        folder_path = os.path.join(folder, letter)
         os.makedirs(folder_path, exist_ok=True)
+        #print(f"Folder '{folder_name}' created in '{root_folder}'.")
 
-        image_pil = Image.new('RGB', (100, 100), color=(255, 255, 255))
-        draw = ImageDraw.Draw(image_pil)
-        text_width, text_height = draw.textsize(letter, font=font)
-        draw.text(((100 - text_width) // 2, (100 - text_height) // 2), letter, font=font, fill=(0, 0, 0))
+def create_image_with_letter(folder, font_paths):
+    letters = [chr(letter) for letter in range(65, 91)]
+    for font_path in font_paths:
+        font = ImageFont.truetype(font_path, size=24)
 
-        image_cv = np.array(image_pil)
-        image_cv = image_cv[:, :, ::-1].copy()
+        for letter in letters:
+            folder_path = os.path.join(folder, letter)
+            os.makedirs(folder_path, exist_ok=True)
 
-        gray = cv2.cvtColor(image_cv, cv2.COLOR_BGR2GRAY)
-        _, binarized = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY_INV)
+            image_pil = Image.new('RGB', (100, 100), color=(255, 255, 255))
+            draw = ImageDraw.Draw(image_pil)
+            text_width, text_height = draw.textsize(letter, font=font)
+            draw.text(((100 - text_width) // 2, (100 - text_height) // 2), letter, font=font, fill=(0, 0, 0))
 
-        contours, _ = cv2.findContours(binarized, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            image_cv = np.array(image_pil)
+            image_cv = image_cv[:, :, ::-1].copy()
 
-        x, y, w, h = cv2.boundingRect(contours[0])
+            gray = cv2.cvtColor(image_cv, cv2.COLOR_BGR2GRAY)
+            _, binarized = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY_INV)
 
-        cropped_image = image_cv[y:y+h, x:x+w]
+            contours, _ = cv2.findContours(binarized, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-        image_path = os.path.join(folder_path, f'{letter}.png')
-        cv2.imwrite(image_path, cropped_image)
+            x, y, w, h = cv2.boundingRect(contours[0])
+
+            cropped_image = image_cv[y:y+h, x:x+w]
+
+            image_path = os.path.join(folder_path, f'{os.path.basename(font_path)}_{letter}.png')
+            cv2.imwrite(image_path, cropped_image)
 
 if __name__ == "__main__":
     root_folder = "ABC"
-    #create_folders(root_folder)
-    create_image_with_letter(root_folder)
+    font_paths = [
+                    "Arial.ttf",
+                ]
+    fontPathFolder = ["fontes/"+i for i in os.listdir("fontes")]
+    #font_paths+=fontPathFolder
+    create_folders(root_folder)
+    create_image_with_letter(root_folder, font_paths)
 

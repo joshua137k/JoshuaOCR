@@ -16,7 +16,7 @@ def rec(path, letter):
 
     result = cv2.matchTemplate(main_gray, template_gray, cv2.TM_CCOEFF_NORMED)
 
-    threshold = 0.96
+    threshold = 0.99
     locations = np.where(result >= threshold)
     locations = list(zip(*locations[::-1]))
 
@@ -27,12 +27,14 @@ def rec(path, letter):
         #cv2.putText(main_image, letter, (loc[0] - template.shape[1], loc[1] - template.shape[0]), font,  1, (40,0,0), 2, cv2.LINE_AA) 
 
 
-letters = {chr(letter) for letter in range(65, 91)}
 
-for letter in letters:
-    folder_path = os.path.join("ABC", letter)
-    path = (folder_path + "/" + letter + ".png")
-    rec(path, letter)
+ABC = os.listdir("ABC")
+for i in ABC:
+    letter = os.listdir("ABC/"+i)
+    for j in letter:
+        path = "ABC/"+i+"/"+j
+        rec(path,i )
+
 
 
 print(sorted(l,key=lambda t:t[1]))
