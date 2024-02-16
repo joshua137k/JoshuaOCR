@@ -6,7 +6,7 @@ image = Image.new('RGB', (width, height), color=(255, 255, 255))
 
 draw = ImageDraw.Draw(image)
 
-text = "HELLO WORLD"
+text = "JOSHUA"
 text_position = (20, 60)
 
 font = ImageFont.truetype("arial.ttf", 24)
